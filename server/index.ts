@@ -5,7 +5,7 @@ import * as path from "path";
 const { PORT = 8001 } = process.env;
 const PUBLIC_DIRECTORY = path.join(__dirname, "../public/");
 
-function listHtmlFiles(directoryPath: string): Record<string, string> {
+function getSlug(directoryPath: string): Record<string, string> {
     const htmlFiles: Record<string, string> = {};
 
     const files = fs.readdirSync(directoryPath);
@@ -24,6 +24,40 @@ function listHtmlFiles(directoryPath: string): Record<string, string> {
 
     return htmlFiles;
 }
+
+function router() {
+    const routes = {
+        get: {} as Record<string, (req: http.IncomingMessage, res: http.ServerResponse) => void>,
+        post: {} as Record<string, (req: http.IncomingMessage, res: http.ServerResponse) => void>,
+    };
+    const get = (path: string, cb: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+        routes.get[path] = cb;
+    };
+    const post = (path: string, cb: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+        routes.post[path] = cb;
+    };
+    return {
+        get,
+        post,
+        routes,
+    };
+}
+
+const appRouter = router();
+
+appRouter.get('/', (req, res) => {
+    const pageContent = getContent('index.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.writeHead(200);
+    res.end(pageContent);
+});
+
+appRouter.get('/cars', (req, res) => {
+    const pageContent = getContent('cars.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.writeHead(200);
+    res.end(pageContent);
+});
 
 function serveStaticFile(res: http.ServerResponse, filePath: string): void {
     const contentType = getContentType(filePath);
@@ -55,14 +89,21 @@ function getContentType(filePath: string): string {
     }
 }
 
+function getContent(fileName: string): string {
+    return fs.readFileSync(path.join(PUBLIC_DIRECTORY, fileName), 'utf-8');
+}
+
 const server = http.createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
     const pathUrl = req.url;
-
     if (pathUrl) {
-        const htmlFilesJson = listHtmlFiles(PUBLIC_DIRECTORY);
+        const htmlFilesJson = getSlug(PUBLIC_DIRECTORY);
 
-        if (pathUrl in htmlFilesJson) {
-            serveStaticFile(res, path.join(PUBLIC_DIRECTORY, htmlFilesJson[pathUrl] || ""));
+        if (req.method === 'GET' && pathUrl in htmlFilesJson) {
+            if (pathUrl === '/') {
+                appRouter.routes.get[pathUrl](req, res);
+            } else {
+                serveStaticFile(res, path.join(PUBLIC_DIRECTORY, htmlFilesJson[pathUrl] || ""));
+            }
         } else {
             const filePath = path.join(PUBLIC_DIRECTORY, pathUrl);
             serveStaticFile(res, filePath);
