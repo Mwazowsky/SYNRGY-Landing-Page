@@ -45,19 +45,16 @@ function router() {
 
 const appRouter = router();
 
-appRouter.get('/', (req, res) => {
-    const pageContent = getContent('index.html');
-    res.setHeader('Content-Type', 'text/html');
-    res.writeHead(200);
-    res.end(pageContent);
-});
+const pagePaths = getSlug(PUBLIC_DIRECTORY);
 
-appRouter.get('/cars', (req, res) => {
-    const pageContent = getContent('cars.html');
-    res.setHeader('Content-Type', 'text/html');
-    res.writeHead(200);
-    res.end(pageContent);
-});
+for (const path in pagePaths) {
+    appRouter.get(path, (req, res) => {
+        const pageContent = getContent(pagePaths[path]);
+        res.setHeader('Content-Type', 'text/html');
+        res.writeHead(200);
+        res.end(pageContent);
+    });
+}
 
 function serveStaticFile(res: http.ServerResponse, filePath: string): void {
     const contentType = getContentType(filePath);
