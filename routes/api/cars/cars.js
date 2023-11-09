@@ -5,34 +5,44 @@ const upload = require('../../../services/upload'); // local
 const db = require("../../../services/DB");
 
 // /api/books
-function ApiRouterBook() {
+function ApiRouterCar() {
     const router = Router(); // instance dari function Router
 
-    // List
+    // Read All
     router.get('/', async (req, res) => {
-        const data = await db.select('*').from('books');
-        res.status(200).json({
-            data,
-        });
+        try {
+            const cars = await db.select("*").from("cars");
+            res.status(200).json({ cars: cars });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     });
 
-    // Single
+    // Read One
     router.get('/:id', async (req, res) => {
-        const id = req.params.id;
-        const data = await db.select('*').from('books').where('books_id', '=', id);
-        res.status(200).json({
-            data: data[0],
-        });
+        const carId = req.params.id;
+        try {
+            const car = await db.select("*").from("cars").where({ car_id: carId }).first();
+            if (!car) {
+                return res.status(404).json({ error: "Car not found" });
+            }
+            res.json(
+                car
+            );
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     });
 
+    // Create
     router.post('/new', upload.single('file'), async (req, res) => {
-        const { title, author, isbn, publish_year, genre } = req.body;
-
+        const { name, rate, size } = req.body;
+    
         const fileBase64 = req.file.buffer.toString('base64');
         const file = `data:${req.file.mimetype};base64,${fileBase64}`;
-
+    
         let imgURL;
-
+    
         try {
             const result = await new Promise((resolve, reject) => {
                 storage.uploader.upload(file, (err, result) => {
@@ -44,7 +54,7 @@ function ApiRouterBook() {
                     }
                 });
             });
-
+    
             imgURL = result.url;
         } catch (error) {
             return res.status(404).json({
@@ -52,17 +62,15 @@ function ApiRouterBook() {
                 success: false,
             });
         }
-
+    
         try {
-            const cars = await db("books").insert({
-                title: title,
-                author: author,
-                isbn: isbn,
-                publish_year: parseInt(publish_year, 10),
-                genre: genre,
-                picture: imgURL,
+            const cars = await db("cars").insert({
+                car_name: name,
+                rate: parseFloat(rate[0]),
+                capacity: parseInt(size, 10),
+                picture: imgURL, // Include the img-url here
             });
-
+    
             res.status(201).json({
                 message: 'Upload Berhasil',
                 success: true,
@@ -72,34 +80,33 @@ function ApiRouterBook() {
             res.status(500).json({ error: error.message });
         }
     });
-
+    
+    // Update
     router.put("/edit/:id", upload.single('file'), async (req, res) => {
         const { id } = req.params;
-
-        const existingCar = await db("books")
-            .where({ book_id: id })
+    
+        const existingCar = await db("cars")
+            .where({ car_id: id })
             .first();
-
+    
         if (!existingCar) {
             return res.status(404).json({ error: "Car not found" });
         }
-
-        const { title, author, isbn, publish_year, genre } = req.body;
-
+    
+        const { car_name, rate, capacity } = req.body;
+    
         const updatedCarData = {
-            title: title || existingCar.title,
-            author: author || existingCar.author,
-            isbn: isbn || existingCar.isbn,
-            publish_year: publish_year ? (isNaN(parseInt(publish_year, 10)) ? existingCar.publish_year : parseInt(publish_year, 10)) : existingCar.publish_year,
-            genre: genre || existingCar.genre,
+            car_name: car_name || existingCar.car_name,
+            rate: rate ? parseFloat(rate) : existingCar.rate,
+            capacity: capacity ? (isNaN(parseInt(capacity, 10)) ? existingCar.capacity : parseInt(capacity, 10)) : existingCar.capacity,
         };
-
+    
         let imgURL;
-
+    
         if (req.file) {
             const fileBase64 = req.file.buffer.toString('base64');
             const file = `data:${req.file.mimetype};base64,${fileBase64}`;
-
+    
             try {
                 // Upload image to storage
                 const result = await new Promise((resolve, reject) => {
@@ -112,7 +119,7 @@ function ApiRouterBook() {
                         }
                     });
                 });
-
+    
                 imgURL = result.url;
             } catch (error) {
                 return res.status(404).json({
@@ -123,27 +130,17 @@ function ApiRouterBook() {
         } else {
             imgURL = existingCar.picture;
         }
-
+    
         try {
-            const updatedCar = await db("books")
-                .where({ book_id: id })
+            const updatedCar = await db("cars")
+                .where({ car_id: id })
                 .update({
-                    title: updatedCarData.title,
-                    author: updatedCarData.author,
-                    isbn: updatedCarData.isbn,
-                    publish_year: updatedCarData.publish_year,
-                    genre: updatedCarData.genre,
+                    car_name: updatedCarData.car_name,
+                    rate: updatedCarData.rate,
+                    capacity: updatedCarData.capacity,
                     picture: imgURL,
-                }, [
-                    "book_id",
-                    "title",
-                    "author",
-                    "isbn",
-                    "publish_year",
-                    "genre",
-                    "picture"
-                ]);
-
+                }, ["car_id", "car_name", "rate", "capacity", "picture"]);
+    
             if (updatedCar.length !== 0) {
                 res.status(201).send(updatedCar);
             } else {
@@ -153,16 +150,17 @@ function ApiRouterBook() {
             res.status(500).json({ error: error.message });
         }
     });
-
+    
+    // Delete
     router.delete("/delete/:id", async (req, res) => {
         const { id } = req.params;
-
+    
         try {
-            const book = await db("books").where({ book_id: id }).del();
-            if (book) {
-                res.status(204).send();
+            const car = await db("cars").where({ car_id: id }).del();
+            if (car) {
+                res.status(204).send({ Success: "car deleted" });
             } else {
-                res.status(404).json({ error: "book not found" });
+                res.status(404).json({ error: "cars not found" });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -172,4 +170,4 @@ function ApiRouterBook() {
     return router;
 }
 
-module.exports = ApiRouterBook;
+module.exports = ApiRouterCar;
