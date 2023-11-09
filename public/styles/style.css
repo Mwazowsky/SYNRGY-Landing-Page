@@ -1,0 +1,375 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+nav.navbar {
+    background-color: #F1F3FF;
+}
+
+.brand-logo {
+    width: 100px;
+    height: 34px;
+    flex-shrink: 0;
+    background: var(--primary-dark-blue-04, #0D28A6);
+}
+
+.offcanvas-body ul li a {
+    color: #000;
+    font-family: Helvetica;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 450;
+    line-height: 20px;
+}
+
+.offcanvas-body ul li a:hover:not(.btn) {
+    color: rgb(112, 112, 112);
+}
+
+.btn.hamburger {
+    color: #ffffff;
+    display: inline-block;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn.hamburger:hover {
+    border: 1px solid #ececec;
+    box-shadow: 1px 10px 30px -10px #646464;
+}
+
+.btn.btn-success {
+    border: 1px solid #5CB85F;
+    color: #ffffff;
+    box-shadow: 1px 10px 30px -10px #5CB85F;
+    display: inline-block;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn.btn-success:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #5CB85F;
+    z-index: -2;
+}
+
+.btn.btn-success:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #ffffff;
+    transition: all .3s;
+    z-index: -1;
+}
+
+.btn.btn-success:hover {
+    color: #5CB85F;
+}
+
+.btn.btn-success:hover:before {
+    width: 100%;
+}
+
+.jumbotron {
+    background: #F1F3FF;
+    padding: 180px 0 80px;
+}
+
+.main-section {
+    height: 100vh;
+    background-color: #F1F3FF;
+    position: relative;
+}
+
+.cars-main-section {
+    height: 87vh;
+    background-color: #F1F3FF;
+    position: relative;
+}
+
+.hero-img-container {
+    position: relative;
+}
+
+.img-car {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    z-index: 100;
+    width: 100%;
+}
+
+.bg-car {
+    display: block;
+    content: "";
+    position: absolute;
+    background-color: #0D28A6;
+    bottom: -100px;
+    right: 0px;
+    height: 104%;
+    width: 100%;
+    border-radius: 100px 0 0 0;
+}
+
+.car-lists {
+    margin: auto;
+    width: 82.55%;
+    margin-top: 92px !important;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.tagline h2,
+.tagline a {
+    margin: 24px 0;
+    text-transform: capitalize;
+}
+
+.dark-focus-bg{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000094;
+    z-index: 100;
+}
+
+.dark-focus-bg.focused {
+    display: block;
+}
+
+/* SERVICES SECTION */
+
+.d-flex p .bi-check-lg {
+    background-color: #CFD4ED;
+    color: #0D28A6;
+    border-radius: 15px;
+    padding: 3px 5px;
+}
+
+.testimonial {
+    padding: 100px 0 0 0;
+}
+
+.testimonial__section {
+    background: #F1F3FF;
+}
+
+.testimonial__list {
+    transform: translateX(-220px);
+}
+
+/* Why Us? Section */
+
+.why-us .card-body {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+    transition: .5s ease;
+    overflow: hidden;
+}
+
+.card-body .bi {
+    color: white;
+    z-index: 1;
+    height: 37px;
+}
+
+.carousel-control-next .bi {
+    color: white;
+    z-index: 1;
+}
+
+.why-us .card-body.yellow::before {
+    position: absolute;
+    content: '';
+    left: -8px;
+    top: -7px;
+    width: 100%;
+    height: 100%;
+    background-color: #F9CC00;
+    transition: .5s ease;
+    clip-path: circle(7% at 32.3px 35.3px);
+}
+
+.why-us .card-body.red::before {
+    position: absolute;
+    content: '';
+    left: -8px;
+    top: -7px;
+    border-radius: 1px;
+    width: 100%;
+    height: 100%;
+    background-color: #FA2C5A;
+    transition: .5s ease;
+    clip-path: circle(7% at 32.3px 34.3px);
+}
+
+.why-us .card-body.blue::before {
+    position: absolute;
+    content: '';
+    left: -8px;
+    top: -7px;
+    border-radius: 1px;
+    width: 100%;
+    height: 100%;
+    background-color: #0D28A6;
+    transition: .5s ease;
+    clip-path: circle(7% at 32.3px 34.3px);
+}
+
+.why-us .card-body.green::before {
+    position: absolute;
+    content: '';
+    left: -8px;
+    top: -7px;
+    border-radius: 1px;
+    width: 100%;
+    height: 100%;
+    background-color: #5CB85F;
+    transition: .5s ease;
+    clip-path: circle(7% at 32.3px 35.3px);
+}
+
+.banner .container {
+    background-color: #0D28A6;
+    border-radius: 13px;
+    color: white;
+    width: 100%;
+
+}
+
+.cars-banner {
+    position: relative;
+}
+
+.cars-banner .container {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 13px;
+    color: #000000;
+    width: 100%;
+    height: 8rem;
+    top: -71px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.2);
+}
+
+.banner .container * {
+    margin: 16px 0;
+}
+
+
+
+/* faq section start */
+
+.cursor-pointer {
+    cursor: pointer;
+    color: black;
+}
+
+.footer .bi {
+    background-color: #0D28A6;
+    margin-right: 16px;
+    border-radius: 15px;
+    padding: 5px 7px;
+    font-size: 18px;
+    color: white;
+    border: 1px solid #0D28A6;
+}
+
+.footer .col-md-2 a {
+    color: black;
+}
+
+.footer .col-md-2 a:hover {
+    color: #0D28A6;
+}
+
+.footer .bi:hover {
+    background-color: white;
+    border: 1px solid #0D28A6;
+    color: #0D28A6;
+    transition: .5s ease;
+}
+
+@media only screen and (max-width: 600px) {
+    .card-body.yellow,
+    .card-body.red,
+    .card-body.blue,
+    .card-body.green {
+        width: 50%;
+        height: 50%;
+    }
+}
+
+@media (max-width: 990px) {
+    .main-section {
+        height: auto;
+    }
+
+    .navbar-nav a:hover:not(.btn)::before {
+        content: "> ";
+    }
+
+    .navbar-nav a:hover:not(.btn)::after {
+        content: " <";
+    }
+
+    .navbar-nav a:hover {
+        border-bottom: none !important;
+    }
+
+    .testimonial__list {
+        transform: translateX(0px);
+    }
+
+    .car-lists {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width:767px) {
+    .bg-car::before {
+        height: 30%;
+        width: 90%;
+    }
+
+    .cars {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .bg-car::before {
+        display: block;
+        content: "";
+        position: absolute;
+        background-color: #0D28A6;
+        bottom: 0;
+        right: 0;
+        height: 70%;
+        width: 50%;
+        border-radius: 100px 0 0 0;
+        z-index: 10;
+    }
+}
