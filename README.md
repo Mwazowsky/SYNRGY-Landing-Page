@@ -52,7 +52,7 @@ In the root directory of the project...
 
 This project is using postgresql as its database, make sure you already have postgres database instance running and accesible. And modify the knexfile.js with your database details.
 
-    ```js
+    ```
     module.exports = {
         development: {
             client: 'postgresql',
@@ -83,13 +83,13 @@ Next you need to populate your database with tables and data to store the data. 
 
 to populate your database with the required fields and tables run this command in your terminal
 
-    ```bash
+    ```
        npx knex migrate:latest --env development
     ```
 
 and to seed the database with initial data run this following command
 
-    ```bash
+    ```
         npx knex seed:run
     ```
 
@@ -97,7 +97,7 @@ and to seed the database with initial data run this following command
 
 Before you can use the API we need to setup cloud storage for storing our media files upload such as image modify ./services/storage.js to use your own cloudinary storage connection details
 
-    ```js
+    ```
     const cloudinary = require('cloudinary').v2;
 
     cloudinary.config({
