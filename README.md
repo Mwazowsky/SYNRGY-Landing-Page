@@ -81,7 +81,7 @@ Next you need to populate your database with tables and data to store the data. 
 
 to populate your database with the required fields and tables run this command in your terminal
 
-    ```json
+    ```bash
     npx knex migrate:latest --env development
     ```
 
