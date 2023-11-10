@@ -33,8 +33,7 @@ To get started with the SYNRGY Landing Page Challenge 5, follow these steps:
 1. Clone the repository to your local machine:
 
     ```bash
-        git clone https://github.com/Mwazowsky/SYNRGY-Landing-Page.git
-    
+    git clone https://github.com/Mwazowsky/SYNRGY-Landing-Page.git
     ```
    
 
@@ -51,7 +50,7 @@ In the root directory of the project...
 
 This project is using postgresql as its database, make sure you already have postgres database instance running and accesible. And modify the knexfile.js with your database details.
 
-    ```
+    ```json
     module.exports = {
         development: {
             client: 'postgresql',
@@ -82,14 +81,14 @@ Next you need to populate your database with tables and data to store the data. 
 
 to populate your database with the required fields and tables run this command in your terminal
 
-    ```
-       npx knex migrate:latest --env development
+    ```json
+    npx knex migrate:latest --env development
     ```
 
 and to seed the database with initial data run this following command
 
-    ```
-        npx knex seed:run
+    ```bash
+    npx knex seed:run
     ```
 
 ### Setting Up Cloudinary cloud storage
