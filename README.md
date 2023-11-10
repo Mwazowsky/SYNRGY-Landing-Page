@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BINAR Car Rental RESTAPI Docs
 
 This is the REST API for BINAR Car Rental, the technology used for this API is Node js for runtime environment, knex js for database connection and ORM and express js for backend HTTP server. 
