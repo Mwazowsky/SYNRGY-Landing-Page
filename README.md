@@ -49,8 +49,7 @@ In the root directory of the project...
 ### Setting up the Database Connection
 
 This project is using postgresql as its database, make sure you already have postgres database instance running and accesible. And modify the knexfile.js with your database details.
-
-    ```json
+```javascript
     module.exports = {
         development: {
             client: 'postgresql',
@@ -72,8 +71,8 @@ This project is using postgresql as its database, make sure you already have pos
                 directory: `${__dirname}/db/seeds`
             }
         }
-    };    
-    ```
+    };  
+```
 
 Next you need to populate your database with tables and data to store the data. the details of the database Entity Relationship Diagram is as follows:
 
@@ -81,15 +80,15 @@ Next you need to populate your database with tables and data to store the data. 
 
 to populate your database with the required fields and tables run this command in your terminal
 
-    ```bash
+```bash
     npx knex migrate:latest --env development
-    ```
+```
 
 and to seed the database with initial data run this following command
 
-    ```bash
+```bash
     npx knex seed:run
-    ```
+```
 
 ### Setting Up Cloudinary cloud storage
 
