@@ -37,12 +37,12 @@ function ApiRouterCar() {
     // Create
     router.post('/new', upload.single('file'), async (req, res) => {
         const { name, rate, size } = req.body;
-    
+
         const fileBase64 = req.file.buffer.toString('base64');
         const file = `data:${req.file.mimetype};base64,${fileBase64}`;
-    
+
         let imgURL;
-    
+
         try {
             const result = await new Promise((resolve, reject) => {
                 storage.uploader.upload(file, (err, result) => {
@@ -54,7 +54,7 @@ function ApiRouterCar() {
                     }
                 });
             });
-    
+
             imgURL = result.url;
         } catch (error) {
             return res.status(404).json({
@@ -62,7 +62,7 @@ function ApiRouterCar() {
                 success: false,
             });
         }
-    
+
         try {
             const cars = await db("cars").insert({
                 car_name: name,
@@ -70,7 +70,7 @@ function ApiRouterCar() {
                 capacity: parseInt(size, 10),
                 picture: imgURL, // Include the img-url here
             });
-    
+
             res.status(201).json({
                 message: 'Upload Berhasil',
                 success: true,
@@ -80,33 +80,33 @@ function ApiRouterCar() {
             res.status(500).json({ error: error.message });
         }
     });
-    
+
     // Update
     router.put("/edit/:id", upload.single('file'), async (req, res) => {
         const { id } = req.params;
-    
+
         const existingCar = await db("cars")
             .where({ car_id: id })
             .first();
-    
+
         if (!existingCar) {
             return res.status(404).json({ error: "Car not found" });
         }
-    
+
         const { car_name, rate, capacity } = req.body;
-    
+
         const updatedCarData = {
             car_name: car_name || existingCar.car_name,
             rate: rate ? parseFloat(rate) : existingCar.rate,
             capacity: capacity ? (isNaN(parseInt(capacity, 10)) ? existingCar.capacity : parseInt(capacity, 10)) : existingCar.capacity,
         };
-    
+
         let imgURL;
-    
+
         if (req.file) {
             const fileBase64 = req.file.buffer.toString('base64');
             const file = `data:${req.file.mimetype};base64,${fileBase64}`;
-    
+
             try {
                 // Upload image to storage
                 const result = await new Promise((resolve, reject) => {
@@ -119,7 +119,7 @@ function ApiRouterCar() {
                         }
                     });
                 });
-    
+
                 imgURL = result.url;
             } catch (error) {
                 return res.status(404).json({
@@ -130,7 +130,7 @@ function ApiRouterCar() {
         } else {
             imgURL = existingCar.picture;
         }
-    
+
         try {
             const updatedCar = await db("cars")
                 .where({ car_id: id })
@@ -140,7 +140,7 @@ function ApiRouterCar() {
                     capacity: updatedCarData.capacity,
                     picture: imgURL,
                 }, ["car_id", "car_name", "rate", "capacity", "picture"]);
-    
+
             if (updatedCar.length !== 0) {
                 res.status(201).send(updatedCar);
             } else {
@@ -150,17 +150,21 @@ function ApiRouterCar() {
             res.status(500).json({ error: error.message });
         }
     });
-    
+
     // Delete
     router.delete("/delete/:id", async (req, res) => {
         const { id } = req.params;
-    
+
         try {
             const car = await db("cars").where({ car_id: id }).del();
             if (car) {
-                res.status(204).send({ Success: "car deleted" });
+                res.status(200).json({
+                    type: "success",
+                    message: "Data berhasil dihapus!",
+                    id: id,
+                });
             } else {
-                res.status(404).json({ error: "cars not found" });
+                res.status(404).json({ error: "Car not found" });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
