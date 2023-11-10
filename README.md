@@ -94,7 +94,7 @@ and to seed the database with initial data run this following command
 
 Before you can use the API we need to setup cloud storage for storing our media files upload such as image modify ./services/storage.js to use your own cloudinary storage connection details
 
-    ```
+```javascript
     const cloudinary = require('cloudinary').v2;
 
     cloudinary.config({
@@ -104,7 +104,7 @@ Before you can use the API we need to setup cloud storage for storing our media 
     });
 
     module.exports = cloudinary;
-    ```
+```
 
 ## Usage
 
