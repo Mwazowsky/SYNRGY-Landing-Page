@@ -1,5 +1,7 @@
-exports.up = function (knex) {
-    return knex.schema.createTable('transactions', (table) => {
+import { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+    await knex.schema.createTable('transactions', (table) => {
         table.increments('transaction_id').primary();
         table.integer('renter_id').unsigned();
         table.integer('car_id').unsigned();
@@ -11,8 +13,8 @@ exports.up = function (knex) {
         table.foreign('renter_id').references('renter_id').inTable('renters');
         table.foreign('car_id').references('car_id').inTable('cars');
     });
-};
+}
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('transactions');
-};
+export async function down(knex: Knex): Promise<void> {
+    await knex.schema.dropTable('transactions');
+}

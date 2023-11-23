@@ -19,12 +19,12 @@ export type P_LoginPayload = {
 };
 
 export interface IUser {
-  id: string;
-  first_name: string,
-  last_name: string,
-  email: string,
-  password: string,
-  token: string
+  user_id: number
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+  role: string
 }
 
 export interface IAuthModel<T, PR = P_RegisterPayload, PL = P_LoginPayload> {

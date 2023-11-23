@@ -6,7 +6,7 @@ const config: { [key: string]: Knex.Config } = {
         client: 'postgresql',
         connection: {
             host: 'localhost',
-            database: 'bcr_db',
+            database: 'bcr_db_1',
             user: 'postgres',
             password: 'postgres',
         },
@@ -16,10 +16,10 @@ const config: { [key: string]: Knex.Config } = {
         },
         migrations: {
             tableName: 'knex_migrations',
-            directory: path.join(__dirname, 'db', 'migrations'),
+            directory: path.join(__dirname, 'database', 'migrations'),
         },
         seeds: {
-            directory: path.join(__dirname, 'db', 'seeds'),
+            directory: path.join(__dirname, 'database', 'seeds'),
         },
     },
 };

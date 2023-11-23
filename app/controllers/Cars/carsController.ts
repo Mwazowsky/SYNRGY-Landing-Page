@@ -1,185 +1,184 @@
 import { Request, Response } from 'express';
-import Media from '../../../config/media';
+import CarsService from '../../services/carsService'; // Import the created service
+import authService from '../../services/authService';
 
-import BookModel, { IBooks } from '../../models/ModelBooks';
-import { IRestController, TPayload } from '../../interfaces/IRest';
+import { IRestController } from '../../interfaces/IRest'
 
-class ControllerBooks implements IRestController {
-    constructor() { }
-    async list(_: Request, res: Response) {
-        try {
-            const books: IBooks[] = await BookModel.list();
+class CarsController implements IRestController{
 
-            res.status(200).json({
-                meta: {
-                    message: 'success',
-                    success: true,
-                    code: 200,
-                },
-                data: books,
-            });
-        } catch (error: any) {
-            res.status(500).json({
-                message: 'Error fetching books',
-                error: error.message,
-            });
-        }
+  constructor() {}
+
+  async healthCheck(req: Request, res: Response) {
+    res.sendStatus(200)
+  }
+
+  async list(_: Request, res: Response) {
+    try {
+      const { data, count } = await CarsService.list();
+      res.status(200).json({
+        status: 'OK',
+        data: { cars: data },
+        meta: { total: count },
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: 'FAIL',
+        message: error.message,
+      });
     }
+  }
 
-    async show(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-
-            const book: IBooks | undefined = await BookModel.show(id);
-
-            if (!book) {
-                res.status(404).json({
-                    message: 'Book not found',
-                });
-                return;
-            }
-
-            res.status(200).json({
-                message: 'Book found',
-                data: book,
-            });
-        } catch (error: any) {
-            res.status(500).json({
-                message: 'Error fetching book',
-                error: error.message,
-            });
-        }
+  async show(req: Request, res: Response) {
+    try {
+      const { car_id } = req.params;
+      const car = await CarsService.get(parseInt(car_id, 10));
+      res.status(200).json({
+        status: 'OK',
+        data: car,
+      });
+    } catch (error: any) {
+      res.status(422).json({
+        status: 'FAIL',
+        message: error.message,
+      });
     }
+  }
 
-    async create(req: Request, res: Response) {
-        try {
-            let title = req.body.title;
-            let author = req.body.author;
-            let isbn = req.body.isbn;
-            let published_year = req.body.published_year;
-            let genre = req.body.genre;
-            let copies_available = req.body.copies_available;
-            let total_copies = req.body.total_copies;
+  async create(req: Request, res: Response) {
+    try {
+      const imgURL: string = (req as any).imgURL;
 
-            if (!req.file) {
-                throw new Error('File is missing');
-            }
+      const headers = req.headers;
 
-            let picture = '';
+      if (!headers.authorization) {
+        return res.status(403).json({
+          data: 'not authorized',
+        });
+      }
 
-            const fileBase64 = req.file.buffer.toString('base64');
-            const file = `data:${req.file.mimetype};base64,${fileBase64}`;
-            const picture_url = await new Promise((resolve, reject) => {
-                Media.storage.uploader.upload(file, (err: any, result: any) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            });
+      const options: object = {
+        "CD (Single Disc)": true,
+        "Airbag: Passenger": true,
+        "A/C: Front": true,
+        "Power Locks": true,
+        "Navigation": true,
+        "Rear Window Defroster": true,
+        "MP3 (Single Disc)": true,
+        "Airbag: Side": true
+      };
+  
+      const specs: object = {
+        "Electric speed-sensitive variable-assist pwr steering": true,
+        "Steel side-door impact beams": true,
+        "Dual bright exhaust tips": true,
+        "Remote fuel lid release": true,
+        "Traveler/mini trip computer": true
+      };
 
-            picture = (picture_url as any)?.url;
+      const bearerToken = `${headers.authorization}`.split('Bearer');
+      const token = bearerToken[1]?.trim();
 
-            const payload: TPayload = {
-                title,
-                author,
-                isbn,
-                published_year,
-                genre,
-                copies_available,
-                total_copies,
-                picture,
-            };
+      const createdBy = authService.validateToken(token);
 
-            const createdBook: IBooks = await BookModel.create(payload);
+      console.log("createdBy >>>", (await createdBy).user_id);
 
-            res.status(201).json({
-                message: 'Create success!',
-                ...createdBook,
-            });
-        } catch (error: any) {
-            console.log(error);
-            res.status(400).json({
-                message: 'Create failed!',
-                error: error.message,
-            });
-        }
+      const requestBodyWithImgURL = {
+        ...req.body,
+        image: imgURL,
+        options: options,
+        specs: specs,
+        created_by: (await createdBy).user_id,
+        updated_by: (await createdBy).user_id
+      };
+
+      const createdcar = await CarsService.create(requestBodyWithImgURL);
+      res.status(201).json({
+        status: 'OK',
+        data: createdcar,
+      });
+    } catch (error: any) {
+      res.status(422).json({
+        status: 'FAIL',
+        message: error.message,
+      });
     }
+  }
 
-    async update(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
+  async update(req: Request, res: Response) {
+    try {
+      const imgURL: string = (req as any).imgURL;
 
-            let title = req.body.title;
-            let author = req.body.author;
-            let isbn = req.body.isbn;
-            let published_year = req.body.published_year;
-            let genre = req.body.genre;
-            let copies_available = req.body.copies_available;
-            let total_copies = req.body.total_copies;
+      const headers = req.headers;
 
-            if (!req.file) {
-                throw new Error('File is missing');
-            }
+      if (!headers.authorization) {
+        return res.status(403).json({
+          data: 'not authorized',
+        });
+      }
 
-            const fileBase64 = req.file.buffer.toString('base64');
-            const file = `data:${req.file.mimetype};base64,${fileBase64}`;
+      const options = {
+      "CD (Single Disc)": true,
+      "Airbag: Passenger": true,
+      "A/C: Front": true,
+      "Power Locks": true,
+      "Navigation": true,
+      "Rear Window Defroster": true,
+      "MP3 (Single Disc)": true,
+      "Airbag: Side": true
+    };
 
-            const picture_url = await new Promise((resolve, reject) => {
-                Media.storage.uploader.upload(file, (err: any, result: any) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            });
+    const specs = {
+      "Electric speed-sensitive variable-assist pwr steering": true,
+      "Steel side-door impact beams": true,
+      "Dual bright exhaust tips": true,
+      "Remote fuel lid release": true,
+      "Traveler/mini trip computer": true
+    };
 
-            const picture = (picture_url as any)?.url;
+      const bearerToken = `${headers.authorization}`.split('Bearer');
+      const token = bearerToken[1]?.trim();
 
-            const payload: TPayload = {
-                title,
-                author,
-                isbn,
-                published_year,
-                genre,
-                copies_available,
-                total_copies,
-                picture,
-            };
+      const updatedBy = authService.validateToken(token);
 
-            const updatedBook: IBooks = await BookModel.update(id, payload);
+      console.log("updatedBy >>>", (await updatedBy).user_id);
+    
+      const requestBodyWithImgURL = {
+        ...req.body,
+        image: imgURL,
+        options: options,
+        specs: specs,
+        updated_by: (await updatedBy).user_id
+      };
 
-            res.status(200).json({
-                message: 'Update success!',
-                ...updatedBook,
-            });
-        } catch (error: any) {
-            res.status(400).json({
-                message: 'Update failed!',
-                error: error.message,
-            });
-        }
+      const { car_id } = req.params;
+      const updatedCar = await CarsService.update(parseInt(car_id, 10), requestBodyWithImgURL);
+      res.status(200).json({
+        status: 'OK',
+        data: updatedCar
+      });
+    } catch (error: any) {
+      res.status(422).json({
+        status: 'FAIL',
+        message: error.message,
+      });
     }
+  }
 
-    async delete(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-
-            const deletedBook = await BookModel.delete(id);
-
-            res.status(200).json({
-                message: 'Book deleted successfully',
-                data: deletedBook,
-            });
-        } catch (error: any) {
-            res.status(400).json({
-                message: 'Delete failed!',
-                error: error.message,
-            });
-        }
+  async delete(req: Request, res: Response) {
+    try {
+      const { car_id } = req.params;
+      await CarsService.delete(parseInt(car_id, 10));
+      res.status(200).json({
+        status: 'OK',
+        message: "Successfully deleted car",
+      });
+    } catch (error: any) {
+      res.status(422).json({
+        status: 'FAIL',
+        message: error.message,
+      });
     }
+  }
 }
 
-export default new ControllerBooks();
+export default new CarsController();

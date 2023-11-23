@@ -1,6 +1,8 @@
-exports.up = function (knex) {
-    return knex.schema.createTable('books', function (table) {
-        table.increments('id').primary();
+import { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+    await knex.schema.createTable('books', (table) => {
+        table.increments('book_id').primary();
         table.string('title').notNullable();
         table.string('author').notNullable();
         table.string('isbn').notNullable();
@@ -10,8 +12,8 @@ exports.up = function (knex) {
         table.integer('total_copies').notNullable();
         table.string('picture').notNullable();
     });
-};
+}
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('books');
-};
+export async function down(knex: Knex): Promise<void> {
+    await knex.schema.dropTable('books');
+}

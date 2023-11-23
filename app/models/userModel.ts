@@ -1,37 +1,29 @@
-import { IAuthModel, P_RegisterPayload, P_LoginPayload, IUser } from '../interfaces/IAuth';
-import database from '../../config/database';
+import { Model } from 'objection';
 
-class User implements IAuthModel<IUser> {
-  constructor() { }
-
-  async login(payload: P_LoginPayload): Promise<IUser> {
-    const user = await database.select('*').from('users').where({ email: payload.email }).first();
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user as IUser;
+class User extends Model {
+  password: any;
+  static get tableName(): string {
+    return 'users';
   }
 
-  async register(payload: P_RegisterPayload): Promise<IUser> {
-    if (!payload) throw new Error('Payload is missing');
+  static get idColumn(): string {
+    return 'user_id'; // Specify the actual primary key column name here
+  }
 
-    const { first_name, last_name, email, password, token } = payload;
-
-    const [insertedId] = await database('users').insert({
-      first_name,
-      last_name,
-      email,
-      password,
-      token
-    }).returning('user_id');
-    console.log('Inserted ID > ', insertedId);
-    if (insertedId) {
-      const createdUser = await database.select('*').from('users').where('user_id', insertedId.user_id).first();
-      return createdUser as IUser;
-    } else {
-      throw new Error('No ID returned after insertion');
-    }
+  static get jsonSchema(): object {
+    return {
+      type: 'object',
+      required: ['first_name', 'last_name', 'email', 'password', 'role'],
+      properties: {
+        user_id: { type: 'integer' },
+        first_name: { type: 'string', minLength: 1, maxLength: 255 },
+        last_name: { type: 'string', minLength: 1, maxLength: 255 },
+        email: { type: 'string', minLength: 1, maxLength: 255 },
+        password: { type: 'string', minLength: 1, maxLength: 255 },
+        role: { type: 'string', minLength: 1, maxLength: 10 },
+      },
+    };
   }
 }
 
-export default new User();
+export default User;
