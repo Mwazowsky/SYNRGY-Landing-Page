@@ -4,9 +4,9 @@ import authService from '../../services/authService';
 
 import { IRestController } from '../../interfaces/IRest'
 
-class CarsController implements IRestController{
+class CarsController implements IRestController {
 
-  constructor() {}
+  constructor() { }
 
   async healthCheck(req: Request, res: Response) {
     res.sendStatus(200)
@@ -32,6 +32,15 @@ class CarsController implements IRestController{
     try {
       const { car_id } = req.params;
       const car = await CarsService.get(parseInt(car_id, 10));
+
+      if (!car) {
+        res.status(404).json({
+          status: 'FAIL',
+          message: 'Car not found',
+        });
+        return;
+      }
+
       res.status(200).json({
         status: 'OK',
         data: car,
@@ -66,7 +75,7 @@ class CarsController implements IRestController{
         "MP3 (Single Disc)": true,
         "Airbag: Side": true
       };
-  
+
       const specs: object = {
         "Electric speed-sensitive variable-assist pwr steering": true,
         "Steel side-door impact beams": true,
@@ -117,23 +126,23 @@ class CarsController implements IRestController{
       }
 
       const options = {
-      "CD (Single Disc)": true,
-      "Airbag: Passenger": true,
-      "A/C: Front": true,
-      "Power Locks": true,
-      "Navigation": true,
-      "Rear Window Defroster": true,
-      "MP3 (Single Disc)": true,
-      "Airbag: Side": true
-    };
+        "CD (Single Disc)": true,
+        "Airbag: Passenger": true,
+        "A/C: Front": true,
+        "Power Locks": true,
+        "Navigation": true,
+        "Rear Window Defroster": true,
+        "MP3 (Single Disc)": true,
+        "Airbag: Side": true
+      };
 
-    const specs = {
-      "Electric speed-sensitive variable-assist pwr steering": true,
-      "Steel side-door impact beams": true,
-      "Dual bright exhaust tips": true,
-      "Remote fuel lid release": true,
-      "Traveler/mini trip computer": true
-    };
+      const specs = {
+        "Electric speed-sensitive variable-assist pwr steering": true,
+        "Steel side-door impact beams": true,
+        "Dual bright exhaust tips": true,
+        "Remote fuel lid release": true,
+        "Traveler/mini trip computer": true
+      };
 
       const bearerToken = `${headers.authorization}`.split('Bearer');
       const token = bearerToken[1]?.trim();
@@ -141,7 +150,7 @@ class CarsController implements IRestController{
       const updatedBy = authService.validateToken(token);
 
       console.log("updatedBy >>>", (await updatedBy).user_id);
-    
+
       const requestBodyWithImgURL = {
         ...req.body,
         image: imgURL,

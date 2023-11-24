@@ -19,8 +19,6 @@
  *         - year
  *         - options
  *         - specs
- *         - created_by
- *         - updated_by
  *       properties:
  *         car_id:
  *           type: integer
@@ -79,12 +77,6 @@
  *         specs:
  *           type: object
  *           description: Specifications of the car.
- *         created_by:
- *           type: integer
- *           description: ID of the user who created the car entry.
- *         updated_by:
- *           type: integer
- *           description: ID of the user who last updated the car entry.
  *     CarResponse:
  *        type: object
  *        properties:

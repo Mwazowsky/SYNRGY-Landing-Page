@@ -9,7 +9,6 @@
  *        - last_name
  *        - email
  *        - password
- *        - passwordConfirmation
  *      properties:
  *        first_name:
  *          type: string
@@ -38,4 +37,23 @@
  *          type: string
  *        updatedAt:
  *          type: string
+ *    LoginUserInput:
+ *         type: object
+ *         required:
+ *           - email
+ *           - password
+ *         properties:
+ *           email:
+ *             type: string
+ *             default: jane.doe@example.com
+ *           password:
+ *             type: string
+ *             default: stringPassword123
+ *    LoginUserResponse:
+ *         type: object
+ *         properties:
+ *           user_id:
+ *             type: string
+ *           email:
+ *             type: string
  */

@@ -29,7 +29,7 @@ class CarsApi {
         
         /**
         * @openapi
-        * /api/cars/:
+        * /api/cars/:id:
         *  get:
         *     tags:
         *     - CRUD - List All Cars
@@ -39,9 +39,6 @@ class CarsApi {
         *         description: App is up and running
         */
         this.router.get('/', CarsController.list); // /api/books READ
-
-
-        this.router.get('/:car_id', CarsController.show); // /api/books/1 -> /api/books/:id READ
 
         /**
         * @openapi
@@ -58,7 +55,7 @@ class CarsApi {
         *             type: object
         *             $ref: '#/components/schema/Car'
         *     responses:
-        *       200:
+        *       201:
         *         description: Car created
         *         content:
         *           application/json:
@@ -105,7 +102,72 @@ class CarsApi {
             AuthMiddleware.authorizeAdmin,
             CarsController.create); // /api/books CREATE
 
-        
+        /**
+        * @openapi
+        * '/api/cars/{car_id}':
+        *  get:
+        *     tags:
+        *     - Cars
+        *     summary: Get a single car by the car_id
+        *     parameters:
+        *      - name: car_id
+        *        in: path
+        *        description: The id of the car
+        *        required: true
+        *     responses:
+        *       200:
+        *         description: Success
+        *         content:
+        *          application/json:
+        *           schema:
+        *              $ref: '#/components/schema/CarResponse'
+        *       404:
+        *         description: Product not found
+        *  put:
+        *     tags:
+        *     - Car
+        *     summary: Update a single car
+        *     parameters:
+        *      - name: car_id
+        *        in: path
+        *        description: The id of the car
+        *        required: true
+        *     requestBody:
+        *       required: true
+        *       content:
+        *         multipart/form-data:
+        *           schema:
+        *             type: object
+        *             $ref: '#/components/schema/Car'
+        *     responses:
+        *       200:
+        *         description: Success
+        *         content:
+        *          application/json:
+        *           schema:
+        *              $ref: '#/components/schema/CarResponse'
+        *       403:
+        *         description: Forbidden
+        *       404:
+        *         description: Product not found
+        *  delete:
+        *     tags:
+        *     - Car
+        *     summary: Delete a single car
+        *     parameters:
+        *      - name: car_id
+        *        in: path
+        *        description: The id of the car
+        *        required: true
+        *     responses:
+        *       200:
+        *         description: Product deleted
+        *       403:
+        *         description: Forbidden
+        *       404:
+        *         description: Product not found
+        */
+        this.router.get('/:car_id', CarsController.show); // /api/books/1 -> /api/books/:id READ
         this.router.put('/:car_id',
             Media.upload.single('image'),
             UploadMiddleware.handleUpload,
