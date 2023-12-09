@@ -95,10 +95,6 @@ function Register() {
           role: roles?.name }
       );
 
-      const { token } = response.data;
-
-      localStorage.setItem("token", `Bearer ${token}`);
-
       setAlert({
         message: "Register success!",
         severity: "success",

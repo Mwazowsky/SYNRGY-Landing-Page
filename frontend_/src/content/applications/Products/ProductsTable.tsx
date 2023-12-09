@@ -118,6 +118,8 @@ const ProductsTable: FC<ProductsTableProps> = ({
   const [limit, setLimit] = useState<number>(5);
   const [filters, setFilters] = useState<Filters>({ status: "all" });
 
+  console.log(cars);
+
   const statusOptions = [
     {
       id: "all",
