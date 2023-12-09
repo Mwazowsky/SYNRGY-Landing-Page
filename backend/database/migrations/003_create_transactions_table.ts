@@ -9,7 +9,8 @@ export async function up(knex: Knex): Promise<void> {
         table.date('due_date');
         table.date('return_date');
         table.decimal('fine_amount', 10, 2);
-
+        table.timestamp('created_at').notNullable();
+        table.timestamp('updated_at').nullable();
         table.foreign('renter_id').references('renter_id').inTable('renters');
         table.foreign('car_id').references('car_id').inTable('cars');
     });

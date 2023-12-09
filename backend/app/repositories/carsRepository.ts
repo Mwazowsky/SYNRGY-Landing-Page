@@ -1,5 +1,11 @@
 import Cars from "../models/carsModel";
 
+export interface IParams {
+  page?: number;
+  size?: number;
+  search?: string;
+}
+
 class CarsRepository {
   create(createArgs: any) {
     return Cars.query().insert(createArgs);
@@ -17,12 +23,31 @@ class CarsRepository {
     return Cars.query().findById(car_id);
   }
 
-  findAll() {
-    return Cars.query();
+  async findAll(params?: IParams) {
+    const cars = Cars.query();
+
+    if (params?.search) {
+      cars
+        .whereILike('manufacture', `%${params?.search}%`)
+        .orWhereILike('model', `%${params?.search}%`);
+    }
+
+    cars.orderBy('created_at', 'desc', 'first');
+
+    return await cars;
   }
 
-  getTotalCars() {
-    return Cars.query().resultSize();
+  async count(params?: IParams) {
+    const allCars = Cars.query().count('car_id');
+    if (params?.search) {
+      allCars
+        .whereILike('manufacture', `%${params?.search}%`)
+        .orWhereILike('model', `%${params?.search}%`);
+    }
+
+    return Number(
+      ((await allCars) as unknown as { count: number }[])[0].count
+    );
   }
 }
 

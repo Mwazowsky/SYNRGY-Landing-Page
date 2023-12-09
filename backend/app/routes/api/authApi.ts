@@ -37,6 +37,8 @@ class AuthApi {
     *        description: Bad request
     */
     this.router.post('/login', AuthController.login);
+    
+    this.router.get('/user-data', AuthMiddleware.authorizeAdmin, AuthController.getUserData);
 
     /**
     * @openapi

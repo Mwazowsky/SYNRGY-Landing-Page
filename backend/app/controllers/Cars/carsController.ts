@@ -19,9 +19,10 @@ class CarsController implements IRestController {
     res.sendStatus(200)
   }
 
-  async list(_: Request, res: Response) {
+  async list(req: Request, res: Response) {
     try {
-      const { data, count } = await CarsService.list();
+      const query = req.query;
+      const { data, count } = await CarsService.list(query);
       res.status(200).json({
         status: 'OK',
         data: { cars: data },
@@ -105,7 +106,14 @@ class CarsController implements IRestController {
 
   async create(req: IRequestWithAuth, res: Response, next: NextFunction) {
     try {
-      CarsService.setUser = req.user as IUser;
+      const userToken = req.body.userToken;
+
+      const bearerToken = userToken.split('Bearer');
+      const token = bearerToken[1]?.trim();
+
+      const userDetails = await authService.validateToken(token);
+
+      CarsService.setUser = userDetails as IUser;
 
       const result = await CarsService.create(req.body as ICar);
 
@@ -123,7 +131,14 @@ class CarsController implements IRestController {
   async update(req: IRequestWithAuth, res: Response, next: NextFunction) {
     try {
       const id = req.params?.car_id;
-      CarsService.setUser = req.user as IUser;
+      const userToken = req.body.userToken;
+
+      const bearerToken = userToken.split('Bearer');
+      const token = bearerToken[1]?.trim();
+
+      const userDetails = await authService.validateToken(token);
+
+      CarsService.setUser = userDetails as IUser;
 
       const result = await CarsService.update(parseInt(id, 10), req.body as ICar);
 

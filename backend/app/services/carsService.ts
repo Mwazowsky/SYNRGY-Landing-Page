@@ -2,6 +2,8 @@ import CarsRepository from "../repositories/carsRepository";
 
 import { IUser } from "../interfaces/IAuth";
 
+import { IParams } from "../repositories/carsRepository";
+
 class CarsService {
   private _user: IUser | undefined;
 
@@ -9,7 +11,15 @@ class CarsService {
 
   async create(requestBody: any) {
     try {
-      return await CarsRepository.create(requestBody);
+      let payload = {
+        ...requestBody,
+        created_by: this._user?.user_id,
+        updated_by: this._user?.user_id
+      }
+
+      delete payload.userToken;
+
+      return await CarsRepository.create(payload);
     } catch (err) {
       console.log(err);
       throw err;
@@ -18,7 +28,16 @@ class CarsService {
 
   async update(car_id: number, requestBody: any) {
     try {
-      return await CarsRepository.update(car_id, requestBody);
+      let payload = {
+        ...requestBody,
+        updated_by: this._user?.user_id
+      }
+
+      delete payload.userToken;
+
+      console.log("Payload >>>", payload);
+
+      return await CarsRepository.update(car_id, payload);
     } catch (err) {
       throw err;
     }
@@ -32,10 +51,10 @@ class CarsService {
     }
   }
 
-  async list() {
+  async list(params?: IParams) {
     try {
-      const data = await CarsRepository.findAll();
-      const count = await CarsRepository.getTotalCars();
+      const data = await CarsRepository.findAll(params);
+      const count = await CarsRepository.count(params);
 
       return {
         data,

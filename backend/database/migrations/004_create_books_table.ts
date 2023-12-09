@@ -11,6 +11,8 @@ export async function up(knex: Knex): Promise<void> {
         table.integer('copies_available').notNullable();
         table.integer('total_copies').notNullable();
         table.string('picture').notNullable();
+        table.timestamp('created_at').notNullable();
+        table.timestamp('updated_at').nullable();
     });
 }
 

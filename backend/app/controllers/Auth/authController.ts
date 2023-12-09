@@ -2,19 +2,20 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import AuthService from '../../services/authService';
 import { IAuthController, IUser } from '../../interfaces/IAuth';
+import { IRequestWithAuth } from '../../middlewares/auth';
 
 function mapUserToIUsers(user: any): IUser {
-  return {
-    user_id: user.user_id,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    email: user.email,
-    password: user.password,
-    role: user.role,
-  };
+    return {
+        user_id: user.user_id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        password: user.password,
+        role: user.role,
+    };
 }
 
-class AuthController implements IAuthController{
+class AuthController implements IAuthController {
     constructor() {
         this.login = this.login.bind(this);
         this.register = this.register.bind(this);
@@ -26,7 +27,7 @@ class AuthController implements IAuthController{
             const { email, password } = req.body;
             const user = await AuthService.login(email, password);
             const mappedUser: IUser = mapUserToIUsers(user.user);
-            
+
             if (user) {
                 token = AuthService.generateToken(mappedUser);
             }
@@ -44,6 +45,36 @@ class AuthController implements IAuthController{
             });
         }
     }
+
+    async getUserData(req: IRequestWithAuth, res: Response) {
+        try {
+            const headers = req.headers;
+
+            if (!headers.authorization) {
+                return res.status(403).json({
+                    data: 'not authorized',
+                });
+            }
+
+            const bearerToken = `${headers.authorization}`.split('Bearer');
+            const token = bearerToken[1]?.trim();
+
+            const userDetails = await AuthService.validateToken(token);
+            const { password, ...userWithoutPassword } = userDetails;
+
+            res.status(200).json({
+                success: true,
+                user: userWithoutPassword,
+            });
+        } catch (error: any) {
+            console.log(error);
+            res.status(401).json({
+                success: false,
+                message: 'Incorrect email or password',
+            });
+        }
+    }
+
 
     async register(req: Request, res: Response) {
         try {

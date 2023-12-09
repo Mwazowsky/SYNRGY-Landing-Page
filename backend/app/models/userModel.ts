@@ -10,6 +10,20 @@ class User extends Model {
     return 'user_id'; // Specify the actual primary key column name here
   }
 
+  $beforeInsert() {
+    // @ts-ignore
+    this.created_at = new Date().toISOString();
+  }
+
+  $beforeUpdate() {
+    // @ts-ignore
+    this.updated_at = new Date().toISOString();
+  }
+
+  static get timestamps() {
+    return true;
+  }
+
   static get jsonSchema(): object {
     return {
       type: 'object',

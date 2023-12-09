@@ -18,6 +18,8 @@ export async function up(knex: Knex): Promise<void> {
     table.integer("year", 4).notNullable();
     table.jsonb("options").notNullable();
     table.jsonb("specs").notNullable();
+    table.timestamp('created_at').notNullable();
+    table.timestamp('updated_at').nullable();
     table.integer("created_by", 20).notNullable();
     table.integer("updated_by", 20).notNullable();
   });
