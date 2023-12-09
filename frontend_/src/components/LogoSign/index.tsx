@@ -99,10 +99,10 @@ function Logo() {
 
   return (
     <TooltipWrapper
-      title="Tokyo Free White React Typescript Admin Dashboard"
+      title="Binar Car Rental Admin Dashboard"
       arrow
     >
-      <LogoWrapper to="/overview">
+      <LogoWrapper to="/management/products">
         <Badge
           sx={{
             '.MuiBadge-badge': {

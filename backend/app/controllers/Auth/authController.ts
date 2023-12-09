@@ -78,7 +78,7 @@ class AuthController implements IAuthController {
 
     async register(req: Request, res: Response) {
         try {
-            const { first_name, last_name, email, password } = req.body;
+            const { first_name, last_name, email, password, role } = req.body;
             const encryptedPassword = await bcrypt.hash(password, 10);
 
             const userData = {
@@ -86,7 +86,7 @@ class AuthController implements IAuthController {
                 last_name,
                 email: email.toLowerCase(),
                 password: encryptedPassword,
-                role: "user",
+                role: role,
             };
 
             const createdUser = await AuthService.register(userData);
